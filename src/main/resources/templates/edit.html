@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Update user</title>
+    <style type="text/css">
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: lightblue;
+        }
+
+        div.container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        h2 {
+            color: navy;
+        }
+
+        hr {
+            margin-top: 20px;
+            margin-bottom: 20px;
+            color: navy;
+        }
+
+        h1 {
+            color: navy;
+            font-size: 20px;
+            text-align: left;
+        }
+
+        p {
+            margin-top: 10px;
+            margin-bottom: 10px;
+        }
+
+        a {
+            color: navy;
+            text-decoration: none;
+        }
+
+        table {
+            width: 80%;
+            margin: 0 auto;
+            border-collapse: collapse;
+        }
+
+        caption {
+            font-weight: bold;
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        th {
+            background-color: lightgray;
+            color: navy;
+            padding: 10px;
+            font-weight: bold;
+            text-align: center;
+            border: 1px solid navy;
+        }
+
+        td {
+            padding: 10px;
+            text-align: center;
+            border: 1px solid navy;
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 10px;
+        }
+
+        .button-container form {
+            margin: 0 5px;
+        }
+
+    </style>
+
+</head>
+<body>
+
+<div class="container">
+    <form th:method="PATCH" th:action="@{/admin/user/{id}(id=${user.getId()})}" th:object="${user}">
+        <h2>Update user</h2>
+        <div class="field">
+            <label for="username">Enter name:</label>
+            <input type="text" th:field="*{username}" id="username"/>
+            <div style="color:red" th:if="${#fields.hasErrors('username')}" th:errors="*{username}">Name error</div>
+        </div>
+        <br/>
+        <div class="field">
+            <label for="password">Enter new password:</label>
+            <input type="password" th:field="*{password}" id="password" required/>
+            <div style="color:red" th:if="${#fields.hasErrors('username')}" th:errors="*{username}">Name error</div>
+        </div>
+
+        <br/>
+        <div class="field">
+            <label for="email">Enter email: </label>
+            <input type="text" th:field="*{email}" id="email"/>
+        </div>
+        <br/>
+        <br/>
+        <div class="form-group row align-items-center mb-3">
+            <label class="col-4 col-form-label text-center">Roles: </label>
+            <div class="col-8">
+                <th:block th:each="role: ${listRoles}">
+                    <input type="checkbox" th:field="*{roles}"
+                           th:text="${role.name}" th:value="${role.id}" class="m-2"/>
+                </th:block>
+            </div>
+        </div>
+        <br/>
+        <input type="submit" value="Update user!" style="background-color: navy; color: white; padding: 10px 20px; border-radius: 5px;"/>
+    </form>
+    <div class="button-container">
+        <form th:action="@{/logout}" method="post">
+            <button type="submit">Logout</button>
+        </form>
+    </div>
+</div>
+
+</body>
+</html>
