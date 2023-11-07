@@ -120,4 +120,14 @@ public class User implements UserDetails {
                 ", email='" + email + '\'' +
                 '}';
     }
+
+    public String getAllRoles(){
+        StringBuilder stringBuilder = new StringBuilder();
+
+        for(Role role : roles){
+            stringBuilder.append(role).append(" ");
+        }
+
+        return stringBuilder.toString().replaceAll("ROLE_","").trim();
+    }
 }

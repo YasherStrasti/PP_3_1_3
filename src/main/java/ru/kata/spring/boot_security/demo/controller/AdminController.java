@@ -11,9 +11,9 @@ import ru.kata.spring.boot_security.demo.model.User;
 import ru.kata.spring.boot_security.demo.util.UserValidator;
 
 import javax.validation.Valid;
+import java.security.Principal;
 
 @Controller
-@RequestMapping("/admin")
 public class AdminController {
 
     private final UserService userService;
@@ -29,56 +29,40 @@ public class AdminController {
     }
 
 
-    @GetMapping("/user/{id}")
-    public String getUserPage(@PathVariable("id") Long id, Model model) {
-        model.addAttribute("user", userService.getUserById(id));
-        return "/user";
-    }
-
-    @GetMapping(value = "")
-    public String getAdminPage(Model model) {
+    @GetMapping(value = "/admin")
+    public String getAdminPage(Model model, Principal principal) {
         model.addAttribute("users", userService.getAllUsers());
-        return "index";
+        model.addAttribute("allRoles", roleService.findAll());
+        model.addAttribute("username", principal.getName());
+        model.addAttribute("role", userService.findByUsername(principal.getName()).getRoles());
+        return "welcome";
     }
 
-    @GetMapping("/user/{id}/edit")
-    public String getEditPage(Model model, @PathVariable("id") Long id, Model roles) {
-        roles.addAttribute("listRoles", roleService.findAll());
-        model.addAttribute("user", userService.getUserById(id));
-        return "edit";
+    @GetMapping()
+    public String getLoginPage(){
+        return REDIRECT;
     }
 
     @PatchMapping("/user/{id}")
-    public String updateUser(@ModelAttribute("user") @Valid User user, BindingResult bindingResult) {
-        userValidator.validate(user, bindingResult);
-
-        if (bindingResult.hasErrors()) {
-            return "edit";
-        } else {
-            userService.update(user);
-            return REDIRECT;
-        }
+    public String updateUser(@ModelAttribute("user") User user) {
+        userService.update(user);
+        return REDIRECT;
     }
 
     @GetMapping("/new")
-    public String getNewUserPage(@ModelAttribute("user") User user, Model model) {
-        model.addAttribute("listRoles", roleService.findAll());
-        return "new";
+    public String getNewUserPage(Model model, User user) {
+        model.addAttribute("user", user);
+        model.addAttribute("roles", roleService.findAll());
+        return REDIRECT;
     }
 
-    @PostMapping("/newuser")
-    public String createUser(@ModelAttribute("user") @Valid User user, BindingResult bindingResult) {
-        userValidator.validate(user, bindingResult);
-
-        if (bindingResult.hasErrors()) {
-            return "new";
-        }
-
+    @PostMapping("/new")
+    public String createUser(@ModelAttribute("user") User user) {
         userService.save(user);
         return REDIRECT;
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/admin/{id}")
     public String deleteUserById(@PathVariable("id") Long id) {
         userService.delete(id);
         return REDIRECT;
